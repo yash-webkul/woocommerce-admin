@@ -45,6 +45,12 @@ class WC_Admin_REST_Admin_Notes_Controller extends WC_REST_CRUD_Controller {
 					'permission_callback' => array( $this, 'get_items_permissions_check' ),
 					'args'                => $this->get_collection_params(),
 				),
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'create_item' ),
+					'permission_callback' => array( $this, 'update_items_permissions_check' ),
+					'args'                => $this->get_endpoint_args_for_item_schema( WP_REST_Server::EDITABLE ),
+				),
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)
 		);
@@ -188,10 +194,87 @@ class WC_Admin_REST_Admin_Notes_Controller extends WC_REST_CRUD_Controller {
 	}
 
 	/**
+	 * Update a note with request parameters.
+	 *
+	 * @param WC_Admin_Note   $note    Note to update.
+	 * @param WP_REST_Request $request API request.
+	 *
+	 * @return WP_Error|WC_Admin_Note
+	 */
+	protected function update_note( $note, $request ) {
+		$editable_schema = $this->get_endpoint_args_for_item_schema( WP_REST_Server::EDITABLE );
+		$editable_fields = array_keys( $editable_schema );
+
+		try {
+			foreach ( $editable_schema as $field => $schema ) {
+				$param_value   = $request->get_param( $field );
+				$update_method = array( $note, 'set_' . $field );
+
+				if ( ! is_null( $param_value ) && is_callable( $update_method ) ) {
+					// TODO: see if this can be done in sanitize callback.
+					if ( 'object' === $schema['type'] && is_array( $param_value ) ) {
+						$param_value = (object) $param_value;
+					}
+
+					call_user_func( $update_method, $param_value );
+				}
+			}
+
+			if ( ! is_null( $request->get_param( 'actions' ) ) ) {
+				$new_actions = $request->get_param( 'actions' );
+				$note->clear_actions();
+
+				foreach ( $new_actions as $new_action ) {
+					if (
+						isset( $new_action['name'] ) &&
+						isset( $new_action['label'] ) &&
+						isset( $new_action['query'] )
+					) {
+						$note->add_action(
+							$new_action['name'],
+							$new_action['label'],
+							$new_action['query'],
+							isset( $new_action['status'] ) ? $new_action['status'] : ''
+						);
+					}
+				}
+			}
+		} catch ( WC_Data_Exception $e ) {
+			return new WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
+		}
+
+		if ( 0 === $note->get_id() || $note->get_changes() ) {
+			$note->save();
+		}
+
+		return $note;
+	}
+
+	/**
+	 * Create a note.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function create_item( $request ) {
+		$note = $this->update_note( new WC_Admin_Note(), $request );
+
+		if ( is_wp_error( $note ) ) {
+			return $note;
+		}
+
+		$data = $note->get_data();
+		$data = $this->prepare_item_for_response( $data, $request );
+		$data = $this->prepare_response_for_collection( $data );
+
+		return rest_ensure_response( $data );
+	}
+
+	/**
 	 * Update a single note.
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
-	 * @return WP_REST_Request|WP_Error
+	 * @return WP_REST_Response|WP_Error
 	 */
 	public function update_item( $request ) {
 		$note = WC_Admin_Notes::get_note( $request->get_param( 'id' ) );
@@ -392,43 +475,36 @@ class WC_Admin_REST_Admin_Notes_Controller extends WC_REST_CRUD_Controller {
 					'description' => __( 'Name of the note.', 'woocommerce-admin' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
 				),
 				'type'              => array(
 					'description' => __( 'The type of the note (e.g. error, warning, etc.).', 'woocommerce-admin' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
 				),
 				'locale'            => array(
 					'description' => __( 'Locale used for the note title and content.', 'woocommerce-admin' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
 				),
 				'title'             => array(
 					'description' => __( 'Title of the note.', 'woocommerce-admin' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
 				),
 				'content'           => array(
 					'description' => __( 'Content of the note.', 'woocommerce-admin' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
 				),
 				'icon'              => array(
 					'description' => __( 'Icon (gridicon) for the note.', 'woocommerce-admin' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
 				),
 				'content_data'      => array(
 					'description' => __( 'Content data for the note. JSON string. Available for re-localization.', 'woocommerce-admin' ),
-					'type'        => 'string',
+					'type'        => 'object',
 					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
 				),
 				'status'            => array(
 					'description' => __( 'The status of the note (e.g. unactioned, actioned).', 'woocommerce-admin' ),
@@ -439,13 +515,11 @@ class WC_Admin_REST_Admin_Notes_Controller extends WC_REST_CRUD_Controller {
 					'description' => __( 'Source of the note.', 'woocommerce-admin' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
 				),
 				'date_created'      => array(
 					'description' => __( 'Date the note was created.', 'woocommerce-admin' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
 				),
 				'date_created_gmt'  => array(
 					'description' => __( 'Date the note was created (GMT).', 'woocommerce-admin' ),
@@ -457,7 +531,6 @@ class WC_Admin_REST_Admin_Notes_Controller extends WC_REST_CRUD_Controller {
 					'description' => __( 'Date after which the user should be reminded of the note, if any.', 'woocommerce-admin' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true, // @todo Allow date_reminder to be updated.
 				),
 				'date_reminder_gmt' => array(
 					'description' => __( 'Date after which the user should be reminded of the note, if any (GMT).', 'woocommerce-admin' ),
@@ -469,13 +542,11 @@ class WC_Admin_REST_Admin_Notes_Controller extends WC_REST_CRUD_Controller {
 					'description' => __( 'Whether or a user can request to be reminded about the note.', 'woocommerce-admin' ),
 					'type'        => 'boolean',
 					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
 				),
 				'actions'           => array(
 					'description' => __( 'An array of actions, if any, for the note.', 'woocommerce-admin' ),
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
-					'readonly'    => true,
 				),
 			),
 		);
