@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { Component, Fragment } from '@wordpress/element';
 import { find, first, isEqual, noop, partial, uniq, without } from 'lodash';
-import { IconButton } from '@wordpress/components';
+import { Button, Dropdown, IconButton, NavigableMenu } from '@wordpress/components';
 import PropTypes from 'prop-types';
 
 /**
@@ -325,18 +325,40 @@ class TableCard extends Component {
 						/>
 					),
 					( downloadable || onClickDownload ) && (
-						<IconButton
-							key="download"
-							className="woocommerce-table__download-button"
-							disabled={ isLoading }
-							onClick={ this.onClickDownload }
-							isLink
-						>
-							<DownloadIcon />
-							<span className="woocommerce-table__download-button__label">
-								{ labels.downloadButton || __( 'Download', 'woocommerce-admin' ) }
-							</span>
-						</IconButton>
+						<Dropdown
+							contentClassName="woocommerce-table__download-button-popover"
+							position="bottom left"
+							renderToggle={ ( { onToggle } ) => (
+								<IconButton
+									key="download"
+									className="woocommerce-table__download-button"
+									disabled={ isLoading }
+									onClick={ onToggle }
+									isLink
+								>
+									<DownloadIcon />
+									<span className="woocommerce-table__download-button__label">
+										{ labels.downloadButton || __( 'Download', 'woocommerce-admin' ) }
+									</span>
+								</IconButton>
+							) }
+							renderContent={ () => (
+								<NavigableMenu className="components-dropdown-menu__menu">
+									<Button
+										className="components-dropdown-menu__menu-item"
+										key="download-now"
+									>
+										{ __( 'Download now', 'woocommerce-admin' ) }
+									</Button>
+									<Button
+										className="components-dropdown-menu__menu-item"
+										key="email"
+									>
+										{ __( 'Email me the report', 'woocommerce-admin' ) }
+									</Button>
+								</NavigableMenu>
+							) }
+						/>
 					),
 				] }
 				menu={
