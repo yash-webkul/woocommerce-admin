@@ -18,8 +18,6 @@ import { getCurrentDates, getDateParamsFromQuery, isoDateFormat } from '@woocomm
 import DatePickerContent from './content';
 import DropdownButton from '../../dropdown-button';
 
-const shortDateFormat = __( 'MM/DD/YYYY', 'woocommerce-admin' );
-
 /**
  * Select a range of dates or single dates.
  */
@@ -34,6 +32,8 @@ class DateRangeFilterPicker extends Component {
 		this.onSelect = this.onSelect.bind( this );
 		this.isValidSelection = this.isValidSelection.bind( this );
 		this.resetCustomValues = this.resetCustomValues.bind( this );
+
+		this.shortDateFormat = __( 'MM/DD/YYYY', 'woocommerce-admin' );
 	}
 
 	getResetState() {
@@ -44,8 +44,8 @@ class DateRangeFilterPicker extends Component {
 			before,
 			after,
 			focusedInput: 'startDate',
-			afterText: after ? after.format( shortDateFormat ) : '',
-			beforeText: before ? before.format( shortDateFormat ) : '',
+			afterText: after ? after.format( this.shortDateFormat ) : '',
+			beforeText: before ? before.format( this.shortDateFormat ) : '',
 			afterError: null,
 			beforeError: null,
 		};
@@ -146,7 +146,7 @@ class DateRangeFilterPicker extends Component {
 							beforeText={ beforeText }
 							afterError={ afterError }
 							beforeError={ beforeError }
-							shortDateFormat={ shortDateFormat }
+							shortDateFormat={ this.shortDateFormat }
 						/>
 					) }
 				/>

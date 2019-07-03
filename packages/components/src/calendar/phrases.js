@@ -4,7 +4,7 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 
-export default {
+export default () => ( {
 	calendarLabel: __( 'Calendar', 'woocommerce-admin' ),
 	closeDatePicker: __( 'Close', 'woocommerce-admin' ),
 	focusStartDate: __( 'Interact with the calendar and select start and end dates.', 'woocommerce-admin' ),
@@ -37,4 +37,4 @@ export default {
 	chooseAvailableDate: ( { date } ) => date,
 	dateIsUnavailable: ( { date } ) => sprintf( __( '%s is not selectable.', 'woocommerce-admin' ), date ),
 	dateIsSelected: ( { date } ) => sprintf( __( 'Selected. %s', 'woocommerce-admin' ), date ),
-};
+} );

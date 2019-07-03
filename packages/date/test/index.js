@@ -16,7 +16,7 @@ import {
 	loadLocaleData,
 	getCurrentDates,
 	validateDateInputForRange,
-	dateValidationMessages,
+	getDateValidationMessages,
 	isoDateFormat,
 	getDateDifferenceInDays,
 	getPreviousDate,
@@ -573,6 +573,7 @@ describe( 'getCurrentDates', () => {
 
 describe( 'validateDateInputForRange', () => {
 	const dateFormat = 'YYYY-MM-DD';
+	const dateValidationMessages = getDateValidationMessages();
 
 	it( 'should return a valid date in Moment object', () => {
 		const validated = validateDateInputForRange( 'after', '2018-04-15', null, null, dateFormat );

@@ -10,7 +10,7 @@ import { SelectControl } from '@wordpress/components';
  * WooCommerce dependencies
  */
 import { DatePicker } from '@woocommerce/components';
-import { dateValidationMessages } from '@woocommerce/date';
+import { getDateValidationMessages } from '@woocommerce/date';
 
 function HistoricalDataPeriodSelector( {
 	dateFormat,
@@ -30,12 +30,16 @@ function HistoricalDataPeriodSelector( {
 		}
 	};
 	const getDatePickerError = momentDate => {
+		const dateValidationMessages = getDateValidationMessages();
+
 		if ( ! momentDate.isValid() || value.date.length !== dateFormat.length ) {
 			return dateValidationMessages.invalid;
 		}
+
 		if ( momentDate.isAfter( new Date(), 'day' ) ) {
 			return dateValidationMessages.future;
 		}
+
 		return null;
 	};
 	const getDatePicker = () => {

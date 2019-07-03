@@ -20,6 +20,7 @@ import Menu from './menu';
  * @return { object } -
  */
 const SummaryList = ( { children, isDropdownBreakpoint, label } ) => {
+	label = label || __( 'Performance Indicators', 'woocommerce-admin' );
 	const items = children( {} );
 	// We default to "one" because we can't have empty children.
 	const itemCount = Children.count( items ) || 1;
@@ -70,10 +71,6 @@ SummaryList.propTypes = {
 	 * An optional label of this group, read to screen reader users.
 	 */
 	label: PropTypes.string,
-};
-
-SummaryList.defaultProps = {
-	label: __( 'Performance Indicators', 'woocommerce-admin' ),
 };
 
 export default withViewportMatch( {

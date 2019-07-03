@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 /**
  * WooCommerce dependencies
  */
-import { periods } from '@woocommerce/date';
+import { getPeriods } from '@woocommerce/date';
 
 /**
  * Internal dependencies
@@ -21,7 +21,7 @@ class ComparePeriods extends Component {
 		const { onSelect, compare } = this.props;
 		return (
 			<SegmentedSelection
-				options={ periods }
+				options={ getPeriods() }
 				selected={ compare }
 				onSelect={ onSelect }
 				name="compare"

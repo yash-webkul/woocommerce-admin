@@ -32,6 +32,7 @@ const SummaryNumber = ( {
 	value,
 	onLinkClickCallback,
 } ) => {
+	prevLabel = prevLabel || __( 'Previous Period:', 'woocommerce-admin' );
 	const liClasses = classnames( 'woocommerce-summary__item-container', {
 		'is-dropdown-button': onToggle,
 		'is-dropdown-expanded': isOpen,
@@ -164,7 +165,6 @@ SummaryNumber.propTypes = {
 SummaryNumber.defaultProps = {
 	href: '',
 	isOpen: false,
-	prevLabel: __( 'Previous Period:', 'woocommerce-admin' ),
 	reverseTrend: false,
 	selected: false,
 	onLinkClickCallback: noop,

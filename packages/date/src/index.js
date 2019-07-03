@@ -29,7 +29,7 @@ export const isoDateFormat = 'YYYY-MM-DD';
  * @param {moment.Moment|null} before - If the period supplied is "custom", this is the before date
  */
 
-export const presetValues = [
+export const getPresetValues = () => [
 	{ value: 'today', label: __( 'Today', 'woocommerce-admin' ) },
 	{ value: 'yesterday', label: __( 'Yesterday', 'woocommerce-admin' ) },
 	{ value: 'week', label: __( 'Week to Date', 'woocommerce-admin' ) },
@@ -43,7 +43,7 @@ export const presetValues = [
 	{ value: 'custom', label: __( 'Custom', 'woocommerce-admin' ) },
 ];
 
-export const periods = [
+export const getPeriods = () => [
 	{ value: 'previous_period', label: __( 'Previous Period', 'woocommerce-admin' ) },
 	{ value: 'previous_year', label: __( 'Previous Year', 'woocommerce-admin' ) },
 ];
@@ -309,13 +309,13 @@ export const getCurrentDates = query => {
 
 	return {
 		primary: {
-			label: find( presetValues, item => item.value === period ).label,
+			label: find( getPresetValues(), item => item.value === period ).label,
 			range: getRangeLabel( primaryStart, primaryEnd ),
 			after: primaryStart,
 			before: primaryEnd,
 		},
 		secondary: {
-			label: find( periods, item => item.value === compare ).label,
+			label: find( getPeriods(), item => item.value === compare ).label,
 			range: getRangeLabel( secondaryStart, secondaryEnd ),
 			after: secondaryStart,
 			before: secondaryEnd,
@@ -537,12 +537,12 @@ export function loadLocaleData() {
 
 loadLocaleData();
 
-export const dateValidationMessages = {
+export const getDateValidationMessages = () => ( {
 	invalid: __( 'Invalid date', 'woocommerce-admin' ),
 	future: __( 'Select a date in the past', 'woocommerce-admin' ),
 	startAfterEnd: __( 'Start date must be before end date', 'woocommerce-admin' ),
 	endBeforeStart: __( 'Start date must be before end date', 'woocommerce-admin' ),
-};
+} );
 
 /**
  * Validate text input supplied for a date range.
@@ -558,6 +558,8 @@ export const dateValidationMessages = {
  */
 export function validateDateInputForRange( type, value, before, after, format ) {
 	const date = toMoment( format, value );
+	const dateValidationMessages = getDateValidationMessages();
+
 	if ( ! date ) {
 		return {
 			date: null,

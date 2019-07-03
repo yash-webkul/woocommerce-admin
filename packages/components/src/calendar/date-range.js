@@ -22,7 +22,7 @@ import { validateDateInputForRange } from '@woocommerce/date';
  * Internal dependencies
  */
 import DateInput from './input';
-import phrases from './phrases';
+import getPhrases from './phrases';
 
 const isRTL = () => document.documentElement.dir === 'rtl';
 
@@ -154,7 +154,7 @@ class DateRange extends Component {
 						noBorder
 						isRTL={ isRTL() }
 						initialVisibleMonth={ this.setTnitialVisibleMonth( isDoubleCalendar, before ) }
-						phrases={ phrases }
+						phrases={ getPhrases() }
 					/>
 				</div>
 			</div>

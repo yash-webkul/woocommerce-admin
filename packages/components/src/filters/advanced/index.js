@@ -32,11 +32,6 @@ import SearchFilter from './search-filter';
 import NumberFilter from './number-filter';
 import DateFilter from './date-filter';
 
-const matches = [
-	{ value: 'all', label: __( 'All', 'woocommerce-admin' ) },
-	{ value: 'any', label: __( 'Any', 'woocommerce-admin' ) },
-];
-
 /**
  * Displays a configurable set of filters which can modify query parameters.
  */
@@ -116,6 +111,11 @@ class AdvancedFilters extends Component {
 	getTitle() {
 		const { match } = this.state;
 		const { config } = this.props;
+		const matches = [
+			{ value: 'all', label: __( 'All', 'woocommerce-admin' ) },
+			{ value: 'any', label: __( 'Any', 'woocommerce-admin' ) },
+		];
+
 		return interpolateComponents( {
 			mixedString: config.title,
 			components: {

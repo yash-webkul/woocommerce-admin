@@ -21,9 +21,6 @@ import DatePicker from '../../calendar/date-picker';
 import { textContent } from './utils';
 import moment from 'moment';
 
-const dateStringFormat = __( 'MMM D, YYYY', 'woocommerce-admin' );
-const dateFormat = __( 'MM/DD/YYYY', 'woocommerce-admin' );
-
 class DateFilter extends Component {
 	constructor( { filter } ) {
 		super( ...arguments );
@@ -32,12 +29,15 @@ class DateFilter extends Component {
 		const after = isoAfter ? toMoment( isoDateFormat, isoAfter ) : null;
 		const before = isoBefore ? toMoment( isoDateFormat, isoBefore ) : null;
 
+		this.dateStringFormat = __( 'MMM D, YYYY', 'woocommerce-admin' );
+		this.dateFormat = __( 'MM/DD/YYYY', 'woocommerce-admin' );
+
 		this.state = {
 			before,
-			beforeText: before ? before.format( dateFormat ) : '',
+			beforeText: before ? before.format( this.dateFormat ) : '',
 			beforeError: null,
 			after,
-			afterText: after ? after.format( dateFormat ) : '',
+			afterText: after ? after.format( this.dateFormat ) : '',
 			afterError: null,
 		};
 
@@ -64,14 +64,14 @@ class DateFilter extends Component {
 			return '';
 		}
 
-		let filterStr = before.format( dateStringFormat );
+		let filterStr = before.format( this.dateStringFormat );
 
 		if ( 'between' === rule.value ) {
 			filterStr = interpolateComponents( {
 				mixedString: this.getBetweenString(),
 				components: {
-					after: <Fragment>{ after.format( dateStringFormat ) }</Fragment>,
-					before: <Fragment>{ before.format( dateStringFormat ) }</Fragment>,
+					after: <Fragment>{ after.format( this.dateStringFormat ) }</Fragment>,
+					before: <Fragment>{ before.format( this.dateStringFormat ) }</Fragment>,
 					span: <Fragment />,
 				},
 			} );
@@ -145,7 +145,7 @@ class DateFilter extends Component {
 							text={ afterText }
 							error={ afterError }
 							onUpdate={ partial( this.onRangeDateChange, 'after' ) }
-							dateFormat={ dateFormat }
+							dateFormat={ this.dateFormat }
 							isInvalidDate={ this.isFutureDate }
 						/>
 					),
@@ -155,7 +155,7 @@ class DateFilter extends Component {
 							text={ beforeText }
 							error={ beforeError }
 							onUpdate={ partial( this.onRangeDateChange, 'before' ) }
-							dateFormat={ dateFormat }
+							dateFormat={ this.dateFormat }
 							isInvalidDate={ this.isFutureDate }
 						/>
 					),
@@ -170,7 +170,7 @@ class DateFilter extends Component {
 				text={ beforeText }
 				error={ beforeError }
 				onUpdate={ this.onSingleDateChange }
-				dateFormat={ dateFormat }
+				dateFormat={ this.dateFormat }
 				isInvalidDate={ this.isFutureDate }
 			/>
 		);

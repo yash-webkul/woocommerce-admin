@@ -22,17 +22,6 @@ import { buildTermsTree } from './hierarchy';
 import SearchListItem from './item';
 import Tag from '../tag';
 
-const defaultMessages = {
-	clear: __( 'Clear all selected items', 'woocommerce-admin' ),
-	list: __( 'Results', 'woocommerce-admin' ),
-	noItems: __( 'No items found.', 'woocommerce-admin' ),
-	noResults: __( 'No results for %s', 'woocommerce-admin' ),
-	search: __( 'Search for items', 'woocommerce-admin' ),
-	selected: ( n ) =>
-		sprintf( _n( '%d item selected', '%d items selected', n, 'woocommerce-admin' ), n ),
-	updated: __( 'Search results updated.', 'woocommerce-admin' ),
-};
-
 /**
  * Component to display a searchable, selectable list of items.
  */
@@ -46,6 +35,17 @@ export class SearchListControl extends Component {
 		this.isSelected = this.isSelected.bind( this );
 		this.defaultRenderItem = this.defaultRenderItem.bind( this );
 		this.renderList = this.renderList.bind( this );
+
+		this.defaultMessages = {
+			clear: __( 'Clear all selected items', 'woocommerce-admin' ),
+			list: __( 'Results', 'woocommerce-admin' ),
+			noItems: __( 'No items found.', 'woocommerce-admin' ),
+			noResults: __( 'No results for %s', 'woocommerce-admin' ),
+			search: __( 'Search for items', 'woocommerce-admin' ),
+			selected: ( n ) =>
+				sprintf( _n( '%d item selected', '%d items selected', n, 'woocommerce-admin' ), n ),
+			updated: __( 'Search results updated.', 'woocommerce-admin' ),
+		};
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -94,7 +94,7 @@ export class SearchListControl extends Component {
 		if ( ! search ) {
 			return isHierarchical ? buildTermsTree( list ) : list;
 		}
-		const messages = { ...defaultMessages, ...this.props.messages };
+		const messages = { ...this.defaultMessages, ...this.props.messages };
 		const re = new RegExp( escapeRegExp( search ), 'i' );
 		this.props.debouncedSpeak( messages.updated );
 		const filteredList = list
@@ -131,7 +131,7 @@ export class SearchListControl extends Component {
 	renderListSection() {
 		const { isLoading, search } = this.props;
 		const list = this.getFilteredList( this.props.list, search );
-		const messages = { ...defaultMessages, ...this.props.messages };
+		const messages = { ...this.defaultMessages, ...this.props.messages };
 
 		if ( isLoading ) {
 			return (
@@ -171,7 +171,7 @@ export class SearchListControl extends Component {
 
 	renderSelectedSection() {
 		const { isLoading, isSingle, selected } = this.props;
-		const messages = { ...defaultMessages, ...this.props.messages };
+		const messages = { ...this.defaultMessages, ...this.props.messages };
 
 		if ( isLoading || isSingle || ! selected ) {
 			return null;
@@ -202,7 +202,7 @@ export class SearchListControl extends Component {
 
 	render() {
 		const { className = '', search, setState } = this.props;
-		const messages = { ...defaultMessages, ...this.props.messages };
+		const messages = { ...this.defaultMessages, ...this.props.messages };
 
 		return (
 			<div className={ `woocommerce-search-list ${ className }` }>

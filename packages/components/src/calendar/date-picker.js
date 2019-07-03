@@ -14,7 +14,7 @@ import moment from 'moment';
 /**
  * WooCommerce dependencies
  */
-import { dateValidationMessages, toMoment } from '@woocommerce/date';
+import { getDateValidationMessages, toMoment } from '@woocommerce/date';
 
 /**
  * Internal dependencies
@@ -58,6 +58,7 @@ class DatePicker extends Component {
 		const value = event.target.value;
 		const { dateFormat } = this.props;
 		const date = toMoment( dateFormat, value );
+		const dateValidationMessages = getDateValidationMessages();
 		const error = date ? null : dateValidationMessages.invalid;
 
 		this.props.onUpdate( {

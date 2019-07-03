@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * WooCommerce dependencies
  */
-import { presetValues } from '@woocommerce/date';
+import { getPresetValues } from '@woocommerce/date';
 
 /**
  * Internal dependencies
@@ -22,7 +22,7 @@ class PresetPeriods extends Component {
 		const { onSelect, period } = this.props;
 		return (
 			<SegmentedSelection
-				options={ filter( presetValues, preset => preset.value !== 'custom' ) }
+				options={ filter( getPresetValues(), preset => preset.value !== 'custom' ) }
 				selected={ period }
 				onSelect={ onSelect }
 				name="period"
