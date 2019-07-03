@@ -197,6 +197,8 @@ class WC_Admin_Loader {
 			return;
 		}
 
+		$plugin_languages_dir = plugin_dir_path( dirname( __FILE__ ) ) . 'languages';
+
 		wp_register_script(
 			'wc-csv',
 			self::get_url( 'csv-export/index.js' ),
@@ -213,7 +215,7 @@ class WC_Admin_Loader {
 			true
 		);
 
-		wp_set_script_translations( 'wc-currency', 'woocommerce-admin' );
+		wp_set_script_translations( 'wc-currency', 'woocommerce-admin', $plugin_languages_dir );
 
 		wp_register_script(
 			'wc-navigation',
@@ -239,7 +241,7 @@ class WC_Admin_Loader {
 			true
 		);
 
-		wp_set_script_translations( 'wc-date', 'woocommerce-admin' );
+		wp_set_script_translations( 'wc-date', 'woocommerce-admin', $plugin_languages_dir );
 
 		wp_register_script(
 			'wc-components',
@@ -262,7 +264,7 @@ class WC_Admin_Loader {
 			true
 		);
 
-		wp_set_script_translations( 'wc-components', 'woocommerce-admin' );
+		wp_set_script_translations( 'wc-components', 'woocommerce-admin', $plugin_languages_dir );
 
 		wp_register_style(
 			'wc-components',
@@ -293,7 +295,7 @@ class WC_Admin_Loader {
 			true
 		);
 
-		wp_set_script_translations( WC_ADMIN_APP, 'woocommerce-admin' );
+		wp_set_script_translations( WC_ADMIN_APP, 'woocommerce-admin', $plugin_languages_dir );
 
 		wp_register_style(
 			WC_ADMIN_APP,
