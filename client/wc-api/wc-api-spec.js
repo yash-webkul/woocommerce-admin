@@ -39,11 +39,6 @@ function createWcApiSpec() {
 		},
 		operations: {
 			read( resourceNames ) {
-				if ( document.hidden ) {
-					// Don't do any read updates while the tab isn't active.
-					return [];
-				}
-
 				return [
 					...imports.operations.read( resourceNames ),
 					...items.operations.read( resourceNames ),
