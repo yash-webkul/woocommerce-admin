@@ -142,7 +142,7 @@ class Controller extends \WC_REST_Reports_Controller {
 	public function get_item_schema() {
 		$data_values = array(
 			'gross_revenue'  => array(
-				'description' => __( 'Gross revenue.', 'woocommerce-admin' ),
+				'description' => __( 'Total Sales.', 'woocommerce-admin' ),
 				'type'        => 'number',
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
@@ -150,7 +150,7 @@ class Controller extends \WC_REST_Reports_Controller {
 				'format'      => 'currency',
 			),
 			'net_revenue'    => array(
-				'description' => __( 'Net revenue.', 'woocommerce-admin' ),
+				'description' => __( 'Net Sales.', 'woocommerce-admin' ),
 				'type'        => 'number',
 				'context'     => array( 'view', 'edit' ),
 				'readonly'    => true,
