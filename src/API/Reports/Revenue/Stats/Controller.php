@@ -382,6 +382,7 @@ class Controller extends \WC_REST_Reports_Controller {
 				'net_revenue',
 				'orders_count',
 				'items_sold',
+				'gross_sales',
 			),
 			'validate_callback' => 'rest_validate_request_arg',
 		);
