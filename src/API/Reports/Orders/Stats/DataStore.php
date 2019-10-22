@@ -76,12 +76,16 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 		global $wpdb;
 		$table_name = $wpdb->prefix . self::TABLE_NAME;
 		// Avoid ambigious columns in SQL query.
+		$refunds = 
+			"( ABS( SUM( CASE WHEN {$table_name}.gross_total < 0 THEN {$table_name}.gross_total ELSE 0 END ) )" .
+			"+ ABS( SUM( CASE WHEN {$table_name}.tax_total < 0 THEN {$table_name}.tax_total ELSE 0 END ) )" .
+			"+ ABS( SUM( CASE WHEN {$table_name}.shipping_total < 0 THEN {$table_name}.shipping_total ELSE 0 END ) ) )";
 		$gross_sales =
 			"( SUM({$table_name}.gross_total)" .
 			" + SUM(coupon_total)" .
 			" - SUM({$table_name}.tax_total)" .
 			" - SUM({$table_name}.shipping_total)" .
-			" + ABS( SUM( CASE WHEN {$table_name}.gross_total < 0 THEN {$table_name}.gross_total ELSE 0 END ) )" .
+			" + {$refunds}" .
 			" ) as gross_sales";
 
 		$this->report_columns = array(
@@ -91,7 +95,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			'gross_revenue'           => "SUM({$table_name}.gross_total) AS gross_revenue",
 			'coupons'                 => 'SUM(discount_amount) AS coupons',
 			'coupons_count'           => 'coupons_count',
-			'refunds'                 => "ABS( SUM( CASE WHEN {$table_name}.gross_total < 0 THEN {$table_name}.gross_total ELSE 0 END ) ) AS refunds",
+			'refunds'                 => "{$refunds} AS refunds",
 			'taxes'                   => "SUM({$table_name}.tax_total) AS taxes",
 			'shipping'                => "SUM({$table_name}.shipping_total) AS shipping",
 			'net_revenue'             => "SUM({$table_name}.net_total) AS net_revenue",
