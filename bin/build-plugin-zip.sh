@@ -52,7 +52,7 @@ fi
 if [ ! -z "$changed" ]; then
 	git status
 	error "ERROR: Cannot build plugin zip with dirty working tree. ☝️
-       Commit your changes and try again."
+		Commit your changes and try again."
 	exit 1
 fi
 
